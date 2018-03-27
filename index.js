@@ -76,15 +76,7 @@ module.exports = (opts) => {
 
       const result = (variables) => {
         _.each(functions, (fn) => {
-          global.definedFunctions[fn.name] = (innerVariables) => {
-            return fn(innerVariables);
-          };
-          if (!fn.name) {
-            console.log(opts);
-            console.log(fn);
-            console.trace("I am here");
-            console.log(resolverTypeDefs());
-          }
+          global.definedFunctions[fn.name] = (innerVariables) => fn(innerVariables);
         });
 
         global.definedFunctions[opts.name] = async (innerVariables) => {
