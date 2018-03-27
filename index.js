@@ -1,62 +1,12 @@
-const { ApolloClient } = require('apollo-client')
-const { HttpLink } = require('apollo-link-http')
-const { InMemoryCache } = require('apollo-cache-inmemory')
 const _ = require('lodash')
-const { GraphQLServer } = require('graphql-yoga')
 const { everySeries } = require('p-iteration');
-const fetch = require('node-fetch')
 const gql = require('graphql-tag')
+const queryServer = require('./queryServer');
 
 global.definedFunctions = {};
 
-const client = (port) => {
-  const link = new HttpLink({
-    uri: `http://localhost:${port}/`,
-    fetch,
-  });
-
-  return new ApolloClient({
-    link,
-    cache: new InMemoryCache(),
-  });
-};
-
-const generatePort = () => {
-  return _.random(4000, 5000);
-};
-
-const transformedResolvers = () => {
-  return _.reduce(global.definedFunctions, (result, resolverFn, key) => {
-    result[key] = (_, variables) => resolverFn(variables);
-    return result;
-  }, {});
-};
-
-const resolverTypeDefs = () => {
-  return _.reduce(global.definedFunctions, (result, resolverFn, key) => {
-    result += `${key}(text: String!): Boolean\n`;
-    return result;
-  }, '');
-};
-
-const queryServer = async (functionName, variables) => {
-  const typeDefs = `
-    type Query {
-      ${resolverTypeDefs()}
-    }
-  `
-
-  const resolvers = {
-    Query: transformedResolvers(),
-  }
-
-  const port = generatePort();
-  const server = new GraphQLServer({ typeDefs, resolvers })
-  const serverInstance = await server.start({
-    port,
-  });
-
-  const result = await client(port).query({
+const queryServerFunction = async (functionName, variables) => {
+  return queryServer({
     query: gql`
       query($text: String!) {
         ${functionName}(text: $text)
@@ -64,9 +14,6 @@ const queryServer = async (functionName, variables) => {
     `,
     variables,
   });
-  await serverInstance.close();
-
-  return result;
 };
 
 module.exports = (opts) => {
@@ -81,7 +28,7 @@ module.exports = (opts) => {
 
         global.definedFunctions[opts.name] = async (innerVariables) => {
           return everySeries(functions, async (fn) => {
-            const serverResult = await queryServer(fn.name, innerVariables)
+            const serverResult = await queryServerFunction(fn.name, innerVariables)
             return serverResult.data[fn.name];
           });
         };
