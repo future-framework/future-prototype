@@ -1,0 +1,23 @@
+{
+  "name": "future-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node --harmony index.js",
+    "test": "node --harmony test.js"
+  },
+  "dependencies": {
+    "apollo-cache-inmemory": "^1.1.11",
+    "apollo-client": "^2.2.7",
+    "apollo-link-http": "^1.5.3",
+    "brain.js": "^1.1.2",
+    "graphql": "^0.13.2",
+    "graphql-tag": "^2.8.0",
+    "graphql-yoga": "^1.6.1",
+    "lodash": "^4.17.5",
+    "node-fetch": "^2.1.1",
+    "one-hot-json": "^0.0.3",
+    "p-iteration": "^1.1.5"
+  }
+}
