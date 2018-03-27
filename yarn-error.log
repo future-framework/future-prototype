@@ -1,5 +1,5 @@
 Arguments: 
-  /Users/domas/.nvm/versions/node/v9.9.0/bin/node /Users/domas/.yarn/bin/yarn.js test --debug-brk
+  /Users/domas/.nvm/versions/node/v9.9.0/bin/node /Users/domas/.yarn/bin/yarn.js test
 
 PATH: 
   /Users/domas/.yarn/bin:/Users/domas/.config/yarn/global/node_modules/.bin:/Users/domas/Developer/miniconda3/bin:/usr/local/opt/gdal2/bin:/Users/domas/.nvm/versions/node/v9.9.0/bin:/Users/domas/.rbenv/shims:/Users/domas/Developer/dotfiles/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/domas/.yarn/bin:/Users/domas/.config/yarn/global/node_modules/.bin:/Users/domas/Developer/miniconda3/bin:/usr/local/opt/gdal2/bin:/Users/domas/.rbenv/shims:/Users/domas/Developer/dotfiles/bin:/Applications/Postgres.app/Contents/Versions/latest/bin:/Users/domas/.fzf/bin:/Applications/Postgres.app/Contents/Versions/latest/bin
@@ -986,7 +986,7 @@ Trace:
   Error: Command failed.
   Exit code: 1
   Command: sh
-  Arguments: -c node --harmony test.js --debug-brk
+  Arguments: -c node --harmony test.js
   Directory: /Users/domas/Developer/future/future-server
   Output:
   

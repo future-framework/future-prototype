@@ -5,7 +5,6 @@ const gql = require('graphql-tag')
 const fetch = require('node-fetch')
 const _ = require('lodash')
 const brain = require('brain.js')
-const serializer = require('./serializer');
 const { GraphQLServer } = require('graphql-yoga')
 const { everySeries } = require('p-iteration');
 
