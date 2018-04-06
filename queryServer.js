@@ -41,6 +41,17 @@ module.exports = async ({ query, variables }) => {
     type Query {
       ${resolverTypeDefs()}
     }
+
+    input Image {
+      pixels: [Pixel!]! @relation(name: "ImageDataPixels")
+    }
+
+    input Pixel {
+      r: Int!
+      g: Int!
+      b: Int!
+      image: Image! @relation(name: "ImageDataPixels")
+    }
   `
 
   const resolvers = {
@@ -53,10 +64,19 @@ module.exports = async ({ query, variables }) => {
     port,
   });
 
-  const result = await client(port).query({
-    query,
-    variables,
-  });
+  let result;
+
+  try {
+    result = await client(port).query({
+      query,
+      variables,
+    });
+  } catch(e) {
+    console.log(e.graphQLErrors);
+    console.log(e.message);
+    console.trace('h')
+    console.log(_.keys(e));
+  }
 
   await serverInstance.close();
 

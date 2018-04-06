@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "start": "node --harmony index.js",
-    "test": "node --harmony test.js"
+    "test": "node --harmony test.js",
+    "testImage": "node --harmony testImage.js"
   },
   "dependencies": {
     "apollo-cache-inmemory": "^1.1.11",

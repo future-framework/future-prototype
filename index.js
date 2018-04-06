@@ -21,11 +21,11 @@ module.exports = (opts) => {
     and: function() {
       const functions = arguments;
 
-      const result = (variables) => {
-        _.each(functions, (fn) => {
-          global.definedFunctions[fn.name] = (innerVariables) => fn(innerVariables);
-        });
+      _.each(functions, (fn) => {
+        global.definedFunctions[fn.name] = (innerVariables) => fn(innerVariables);
+      });
 
+      const result = (variables) => {
         global.definedFunctions[opts.name] = async (innerVariables) => {
           return everySeries(functions, async (fn) => {
             const serverResult = await queryServerFunction(fn.name, innerVariables)
@@ -37,6 +37,17 @@ module.exports = (opts) => {
       };
 
       Object.defineProperty(result, 'name', { value: opts.name });
+      return result;
+    },
+    create: function(fn) {
+      global.definedFunctions[fn.name] = (innerVariables) => fn(innerVariables);
+
+      const result = async (variables) => {
+        const serverResult = await queryServerFunction(fn.name, variables)
+        return serverResult.data[fn.name];
+      };
+
+      Object.defineProperty(result, 'name', { value: fn.name });
       return result;
     },
   };
