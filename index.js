@@ -39,13 +39,10 @@ module.exports = (opts) => {
       Object.defineProperty(result, 'name', { value: opts.name });
       return result;
     },
-    create: function(fn, inputType, payloadType, dependencyName) {
+    create: function(fn, opts) {
       global.definedFunctions.push({
-        name: fn.name,
-        dependencyName,
-        inputType,
-        payloadType,
         fn: (innerVariables) => fn(innerVariables),
+        ...opts,
       });
 
       const result = async (variables) => {

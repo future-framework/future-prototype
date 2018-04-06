@@ -26,27 +26,86 @@ const transformedResolvers = () => {
 
   _.each(global.definedFunctions, (fn) => {
     result[fn.name] = (_a, variables) => {
-      if (!fn.dependencyName) return fn.fn(variables);
+      if (_.isEmpty(fn.input)) return fn.fn(variables);
 
-      const dependency = _.find(global.definedFunctions, { name: fn.dependencyName });
-      const dependencyResult = dependency.fn(variables);
-      return fn.fn(_.merge({ [fn.dependencyName]: dependencyResult }, variables));
+      const dependencyResult = {};
+
+      _.each(fn.input, (val, key) => {
+        const dependency = _.find(global.definedFunctions, { name: val.replace(/Input$/, '') });
+        dependencyResult[key] = dependency.fn(variables);
+      });
+
+      return fn.fn(_.merge(dependencyResult, variables));
     };
   });
 
   return result;
 };
 
+const inputTypes = (fn) => {
+  const result = [];
+
+  _.each(fn.input, (val, key) => {
+    result.push([`${key}: ${val}`]);
+
+    const dependency = _.find(global.definedFunctions, { name: val.replace(/Input$/, '') });
+
+    if (!dependency) return;
+
+    _.each(dependency.input, (depVal, depKey) => {
+      result.push([`${depKey}: ${depVal}`]);
+    });
+  });
+
+  return result.join(', ');
+};
+
+const outputTypes = (fn) => {
+  const result = [];
+
+  _.each(fn.output, (val, key) => {
+    result.push([`${key}: ${val}`]);
+  });
+
+  return result.join(', ');
+};
+
 const resolverTypeDefs = () => {
   let result = '';
 
   _.each(global.definedFunctions, (fn) => {
-    result += `${fn.name}(${fn.inputType}): ${fn.payloadType}\n`;
+    result += `${fn.name}(${inputTypes(fn)}): ${fn.name}Payload\n`;
   });
 
   return result;
 };
 
+const attributeTypes = (fn) => {
+  const result = [];
+
+  _.each(fn.output, (val, key) => {
+    result.push([`${key}: ${val}`]);
+  });
+
+  return result.join("\n");
+};
+
+const types = () => {
+  let result = '';
+
+  _.each(global.definedFunctions, (fn) => {
+    result += `
+      type ${fn.name}Payload {
+        ${attributeTypes(fn)}
+      }\n\n
+      input ${fn.name}Input {
+        ${attributeTypes(fn)}
+      }\n\n
+    `;
+  });
+
+  return result;
+};
 
 module.exports = async ({ query, variables }) => {
   const typeDefs = `
@@ -64,14 +123,18 @@ module.exports = async ({ query, variables }) => {
       b: Int!
     }
 
-    type HumanPayload {
-      bbox: [Int!]!
-    }
+    ${types()}
 
-    type HeadPayload {
-      bbox: [Int!]!
-    }
   `
+
+  console.log(typeDefs);
+    // type Human {
+    //   bbox: [Int!]!
+    // }
+    //
+    // type Head {
+    //   bbox: [Int!]!
+    // }
 
   const resolvers = {
     Query: transformedResolvers(),

@@ -12,7 +12,15 @@ const run = async () => {
     };
   };
 
-  future().create(human, 'image: Image!', 'HumanPayload');
+  future().create(human, {
+    name: 'human',
+    input: {
+      image: 'Image',
+    },
+    output: {
+      bbox: '[Int]',
+    }
+  });
 
   const head = ({ human: { bbox }, image }) => {
     console.log('from head, hjma bbox', bbox)
@@ -23,7 +31,16 @@ const run = async () => {
       bbox: _.map(bbox, (point) => point + 1000),
     };
   };
-  future().create(head, 'image: Image!', 'HeadPayload', 'human');
+
+  future().create(head, {
+    name: 'head',
+    input: {
+      human: 'humanInput',
+    },
+    output: {
+      bbox: '[Int]'
+    },
+  });
 
   // TODO: make it so you dont have to initialize the network with this network
   // call but could use it upon definition on future()..;
