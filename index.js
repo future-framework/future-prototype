@@ -3,7 +3,7 @@ const { everySeries } = require('p-iteration');
 const gql = require('graphql-tag')
 const queryServer = require('./queryServer');
 
-global.definedFunctions = {};
+global.definedFunctions = [];
 
 const queryServerFunction = async (functionName, variables) => {
   return queryServer({
@@ -39,8 +39,14 @@ module.exports = (opts) => {
       Object.defineProperty(result, 'name', { value: opts.name });
       return result;
     },
-    create: function(fn) {
-      global.definedFunctions[fn.name] = (innerVariables) => fn(innerVariables);
+    create: function(fn, inputType, payloadType, dependencyName) {
+      global.definedFunctions.push({
+        name: fn.name,
+        dependencyName,
+        inputType,
+        payloadType,
+        fn: (innerVariables) => fn(innerVariables),
+      });
 
       const result = async (variables) => {
         const serverResult = await queryServerFunction(fn.name, variables)

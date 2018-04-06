@@ -22,17 +22,29 @@ const generatePort = () => {
 };
 
 const transformedResolvers = () => {
-  return _.reduce(global.definedFunctions, (result, resolverFn, key) => {
-    result[key] = (_, variables) => resolverFn(variables);
-    return result;
-  }, {});
+  const result = {};
+
+  _.each(global.definedFunctions, (fn) => {
+    result[fn.name] = (_a, variables) => {
+      if (!fn.dependencyName) return fn.fn(variables);
+
+      const dependency = _.find(global.definedFunctions, { name: fn.dependencyName });
+      const dependencyResult = dependency.fn(variables);
+      return fn.fn(_.merge({ [fn.dependencyName]: dependencyResult }, variables));
+    };
+  });
+
+  return result;
 };
 
 const resolverTypeDefs = () => {
-  return _.reduce(global.definedFunctions, (result, resolverFn, key) => {
-    result += `${key}(text: String!): Boolean\n`;
-    return result;
-  }, '');
+  let result = '';
+
+  _.each(global.definedFunctions, (fn) => {
+    result += `${fn.name}(${fn.inputType}): ${fn.payloadType}\n`;
+  });
+
+  return result;
 };
 
 
@@ -43,14 +55,21 @@ module.exports = async ({ query, variables }) => {
     }
 
     input Image {
-      pixels: [Pixel!]! @relation(name: "ImageDataPixels")
+      pixels: [Pixel!]!
     }
 
     input Pixel {
       r: Int!
       g: Int!
       b: Int!
-      image: Image! @relation(name: "ImageDataPixels")
+    }
+
+    type HumanPayload {
+      bbox: [Int!]!
+    }
+
+    type HeadPayload {
+      bbox: [Int!]!
     }
   `
 
@@ -63,6 +82,8 @@ module.exports = async ({ query, variables }) => {
   const serverInstance = await server.start({
     port,
   });
+  console.log(port);
+  // const port
 
   let result;
 

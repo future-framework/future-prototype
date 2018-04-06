@@ -1,4 +1,5 @@
 const gql = require('graphql-tag')
+const _ = require('lodash');
 const future = require('./index');
 const queryServer = require('./queryServer');
 
@@ -11,12 +12,18 @@ const run = async () => {
     };
   };
 
-  future().create(human);
+  future().create(human, 'image: Image!', 'HumanPayload');
 
-  `{
-    human(imageData: [321321])
-    human(imageUrl: https)
-  }`
+  const head = ({ human: { bbox }, image }) => {
+    console.log('from head, hjma bbox', bbox)
+    console.log('image in head', image)
+    return {
+      // pretend that some extraction of coords is happening from imageData
+      // left bottom right top
+      bbox: _.map(bbox, (point) => point + 1000),
+    };
+  };
+  future().create(head, 'image: Image!', 'HeadPayload', 'human');
 
   // TODO: make it so you dont have to initialize the network with this network
   // call but could use it upon definition on future()..;
@@ -34,12 +41,11 @@ const run = async () => {
       },
     ],
   };
-  // await humanNetwork({ imageData })
 
-  console.log(await queryServer({
+  console.log(JSON.stringify(await queryServer({
     query: gql`
       query($image: Image!) {
-        human(image: $image) {
+        head(image: $image) {
           bbox
         }
       }
@@ -47,7 +53,7 @@ const run = async () => {
     variables: {
       image,
     },
-  }));
+  })));
 };
 
 run();
