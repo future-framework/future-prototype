@@ -5,17 +5,6 @@ const queryServer = require('./queryServer');
 
 global.definedFunctions = [];
 
-const queryServerFunction = async (functionName, variables) => {
-  return queryServer({
-    query: gql`
-      query($text: String!) {
-        ${functionName}(text: $text)
-      }
-    `,
-    variables,
-  });
-};
-
 const get = async function(name, variables) {
   const definedFunction = _.find(global.definedFunctions, { name });
   const outputAttributes = _.keys(definedFunction.output);
@@ -53,7 +42,7 @@ const get = async function(name, variables) {
     variables,
   });
 
-  return _.get(result, 'data');
+  return _.get(result, `data.${name}`);
 };
 
 module.exports = (opts) => {
@@ -68,8 +57,7 @@ module.exports = (opts) => {
       const result = (variables) => {
         global.definedFunctions[opts.name] = async (innerVariables) => {
           return everySeries(functions, async (fn) => {
-            const serverResult = await queryServerFunction(fn.name, innerVariables)
-            return serverResult.data[fn.name];
+            return await get(fn.name, variables);
           });
         };
 
@@ -93,5 +81,6 @@ module.exports = (opts) => {
       return result;
     },
     get,
+    query: queryServer,
   };
 };

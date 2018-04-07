@@ -1,7 +1,6 @@
 const gql = require('graphql-tag')
 const _ = require('lodash');
 const future = require('./index');
-const queryServer = require('./queryServer');
 
 const run = async () => {
   const human = ({ imageData }) => {
@@ -61,18 +60,18 @@ const run = async () => {
   const headResult = await future().get('head', { image });
   console.log('hr',headResult);
 
-  // const headResult = await future().get({
-  //   query: gql`
-  //     query($image: Image!) {
-  //       head(image: $image) {
-  //         bbox
-  //       }
-  //     }
-  //   `,
-  //   variables: {
-  //     image,
-  //   },
-  // });
+  console.log('query works', await future().query({
+    query: gql`
+      query($image: Image!) {
+        head(image: $image) {
+          bbox
+        }
+      }
+    `,
+    variables: {
+      image,
+    },
+  }));
 };
 
 run();
