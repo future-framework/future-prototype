@@ -3,7 +3,7 @@ const _ = require('lodash');
 const future = require('./index');
 
 const run = async () => {
-  const human = ({ imageData }) => {
+  const human = ({ image: { pixels } }) => {
     return {
       // pretend that some extraction of coords is happening from imageData
       // left bottom right top
@@ -22,8 +22,6 @@ const run = async () => {
   });
 
   const head = ({ human: { bbox }, image }) => {
-    console.log('from head, hjma bbox', bbox)
-    console.log('image in head', image)
     return {
       bbox: _.map(bbox, (point) => point + 1000),
     };
@@ -54,11 +52,11 @@ const run = async () => {
     ],
   };
 
-  const f = await headFn({ image });
-  console.log('ffff', f);
+  const returnedFunction = await headFn({ image });
+  console.log('returned function works', returnedFunction);
 
-  const headResult = await future().get('head', { image });
-  console.log('hr',headResult);
+  const getFunction = await future().get('head', { image });
+  console.log('get function works', getFunction);
 
   console.log('query works', await future().query({
     query: gql`

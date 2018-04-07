@@ -127,15 +127,6 @@ module.exports = async ({ query, variables }) => {
 
   `
 
-  console.log(typeDefs);
-    // type Human {
-    //   bbox: [Int!]!
-    // }
-    //
-    // type Head {
-    //   bbox: [Int!]!
-    // }
-
   const resolvers = {
     Query: transformedResolvers(),
   }
