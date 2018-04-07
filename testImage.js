@@ -26,13 +26,11 @@ const run = async () => {
     console.log('from head, hjma bbox', bbox)
     console.log('image in head', image)
     return {
-      // pretend that some extraction of coords is happening from imageData
-      // left bottom right top
       bbox: _.map(bbox, (point) => point + 1000),
     };
   };
 
-  future().create(head, {
+  const headFn = future().create(head, {
     name: 'head',
     input: {
       human: 'humanInput',
@@ -42,8 +40,6 @@ const run = async () => {
     },
   });
 
-  // TODO: make it so you dont have to initialize the network with this network
-  // call but could use it upon definition on future()..;
   const image = {
     pixels: [
       {
@@ -59,18 +55,24 @@ const run = async () => {
     ],
   };
 
-  console.log(JSON.stringify(await queryServer({
-    query: gql`
-      query($image: Image!) {
-        head(image: $image) {
-          bbox
-        }
-      }
-    `,
-    variables: {
-      image,
-    },
-  })));
+  const f = await headFn({ image });
+  console.log('ffff', f);
+
+  const headResult = await future().get('head', { image });
+  console.log('hr',headResult);
+
+  // const headResult = await future().get({
+  //   query: gql`
+  //     query($image: Image!) {
+  //       head(image: $image) {
+  //         bbox
+  //       }
+  //     }
+  //   `,
+  //   variables: {
+  //     image,
+  //   },
+  // });
 };
 
 run();

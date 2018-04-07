@@ -16,6 +16,46 @@ const queryServerFunction = async (functionName, variables) => {
   });
 };
 
+const get = async function(name, variables) {
+  const definedFunction = _.find(global.definedFunctions, { name });
+  const outputAttributes = _.keys(definedFunction.output);
+
+  const inputTypes = (fn) => {
+    const result = [];
+
+    _.each(fn.input, (val, key) => {
+      if (_.includes(_.keys(variables), key)) result.push([`$${key}: ${val}`]);
+
+      const dependency = _.find(global.definedFunctions, { name: val.replace(/Input$/, '') });
+
+      if (!dependency) return;
+
+      _.each(dependency.input, (depVal, depKey) => {
+        if (_.includes(_.keys(variables), depKey)) result.push([`$${depKey}: ${depVal}`]);
+      });
+    });
+
+    return result.join(', ');
+  };
+
+  const functionArgs = 'image: $image';
+
+  const query = gql`
+    query(${inputTypes(definedFunction)}) {
+      ${name}(${functionArgs}) {
+        ${outputAttributes.join("\n")}
+      }
+    }
+  `;
+
+  const result = await queryServer({
+    query,
+    variables,
+  });
+
+  return _.get(result, 'data');
+};
+
 module.exports = (opts) => {
   return {
     and: function() {
@@ -46,12 +86,12 @@ module.exports = (opts) => {
       });
 
       const result = async (variables) => {
-        const serverResult = await queryServerFunction(fn.name, variables)
-        return serverResult.data[fn.name];
+        return await get(fn.name, variables);
       };
 
       Object.defineProperty(result, 'name', { value: fn.name });
       return result;
     },
+    get,
   };
 };
