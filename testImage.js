@@ -30,7 +30,7 @@ const run = async () => {
   const headFn = future().create(head, {
     name: 'head',
     input: {
-      human: 'humanInput',
+      human: 'HumanInput',
     },
     output: {
       bbox: '[Int]'
