@@ -22,12 +22,12 @@ const run = async () => {
 
     const data = _.map(images, (image, i) => (
       {
-        input: image.pixels,
+        input: image.pixels[0],
         output: imageLabels[i],
       }
     ));
 
-    console.log('data', data);
+    console.log('data', JSON.stringify(data));
 
     net.train(data);
 
@@ -37,13 +37,14 @@ const run = async () => {
   };
 
   const colorContrast = ({ image, train: { weights } }) => {
+    console.log(image);
     console.log('wei', weights);
     const net = new brain.NeuralNetwork();
     net.fromJSON(weights);
 
-    console.log(net.run(image).black);
+    console.log(net.run(image.pixels[0]).black);
     return {
-      value: net.run(image).black,
+      value: net.run(image.pixels[0]).black,
     };
   };
 
@@ -69,6 +70,8 @@ const run = async () => {
   });
 
   console.log(await cc({ image: images[0] }));
+  console.log(await cc({ image: images[1] }));
+  console.log(await cc({ image: images[2] }));
 
   const human = ({ image: { pixels } }) => {
     return {
