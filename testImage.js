@@ -89,12 +89,12 @@ const run = async () => {
 
   console.log(await cc({ description: descriptions[0] }));
 
-  const trainSentiment = ({ descriptions, sentimentLabels, framework: { label } }) => {
+  const trainSentiment = ({ descriptions, sentimentLabels, framework }) => {
     const net = new brain.recurrent.LSTM();
 
     const data = _.map(descriptions, (description, i) => (
       {
-        input: description + label,
+        input: description + framework({ description }).label,
         output: sentimentLabels[i],
       }
     ));
