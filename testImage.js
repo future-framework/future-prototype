@@ -2,76 +2,148 @@ const gql = require('graphql-tag')
 const _ = require('lodash');
 const future = require('./index');
 const brain = require('brain.js');
+const sharp = require('sharp');
+const Promise = require('bluebird');
+
+const NUM = 40000
 
 const run = async () => {
-  const images = [
-    { pixels: [{ r: 0.03, g: 0.7, b: 0.5 }] },
-    { pixels: [{ r: 0.16, g: 0.09, b: 0.2 }] },
-    { pixels: [{ r: 0.5, g: 0.5, b: 1.0 }] },
+  const descriptions = [
+    'i like laravel',
+    'i work with laravel',
+    'i do this',
   ];
 
-  const imageLabels = [
-    { black: 1 },
-    { white: 1 },
-    { white: 1 },
+  const frameworkLabels = [
+    'laravel',
+    'laravel',
+    'no',
   ];
 
-  const train = ({ images, imageLabels }) => {
-    console.log('training on images', { images, imageLabels });
-    const net = new brain.NeuralNetwork();
+  const sentimentLabels = [
+    'like',
+    'like',
+    'neutral',
+  ];
 
-    const data = _.map(images, (image, i) => (
+  const workLabels = [
+    'work',
+    'work',
+    'no',
+  ];
+
+  const trainFramework = ({ descriptions, frameworkLabels }) => {
+    const net = new brain.recurrent.LSTM();
+
+    const data = _.map(descriptions, (description, i) => (
       {
-        input: image.pixels[0],
-        output: imageLabels[i],
+        input: description,
+        output: frameworkLabels[i],
       }
     ));
 
     console.log('data', JSON.stringify(data));
 
-    net.train(data);
+    net.train(data, {
+      iterations: 10,
+    });
 
     return {
       weights: net.toJSON(),
     };
   };
 
-  const colorContrast = ({ image, train: { weights } }) => {
-    console.log(image);
-    console.log('wei', weights);
-    const net = new brain.NeuralNetwork();
+  const framework = ({ description, train: { weights } }) => {
+    // console.log(image);
+    // console.log('wei', weights);
+    const net = new brain.recurrent.LSTM();
     net.fromJSON(weights);
 
-    console.log(net.run(image.pixels[0]).black);
+    const label = net.run(description);
+
     return {
-      value: net.run(image.pixels[0]).black,
+      label,
     };
   };
 
-  const cc = future().create(colorContrast, {
-    name: 'colorContrast',
+  const cc = future().create(framework, {
+    name: 'framework',
     train: {
-      fn: train,
-      data: {
-        images,
-        imageLabels,
+      fn: trainFramework,
+      variables: {
+        descriptions,
+        frameworkLabels,
       },
       input: {
-        images: '[Image]',
-        imageLabels: '[ImageLabel]',
+        descriptions: '[String]',
+        frameworkLabels: '[String]',
       },
     },
     input: {
-      image: 'Image',
+      description: 'String',
     },
     output: {
-      value: 'Float',
+      label: 'String',
     },
   });
 
-  console.log(await cc({ image: images[0] }));
-  console.log(await cc({ image: images[1] }));
-  console.log(await cc({ image: images[2] }));
+  console.log(await cc({ description: descriptions[0] }));
+
+  const trainSentiment = ({ descriptions, sentimentLabels, framework: { label } }) => {
+    const net = new brain.recurrent.LSTM();
+
+    const data = _.map(descriptions, (description, i) => (
+      {
+        input: description + label,
+        output: sentimentLabels[i],
+      }
+    ));
+
+    console.log('data', JSON.stringify(data));
+
+    net.train(data, {
+      iterations: 10,
+    });
+
+    return {
+      weights: net.toJSON(),
+    };
+  };
+
+
+  const sentiment = ({ description, train: { weights } }) => {
+    const net = new brain.recurrent.LSTM();
+    net.fromJSON(weights);
+    const label = net.run(description);
+
+    return {
+      label,
+    };
+  };
+
+  const sentimentNetwork = future().create(sentiment, {
+    name: 'sentiment',
+    train: {
+      fn: trainSentiment,
+      variables: {
+        descriptions,
+        sentimentLabels,
+      },
+      input: {
+        descriptions: '[String]',
+        sentimentLabels: '[String]',
+        framework: 'FrameworkInput',
+      },
+    },
+    input: {
+      description: 'String',
+    },
+    output: {
+      label: 'String',
+    },
+  });
+
+  console.log(await sentimentNetwork({ description: descriptions[0] }));
 
   const human = ({ image: { pixels } }) => {
     return {
@@ -122,24 +194,24 @@ const run = async () => {
     ],
   };
 
-  const returnedFunction = await headFn({ image });
-  console.log('returned function works', returnedFunction);
-
-  const getFunction = await future().get('head', { image });
-  console.log('get function works', getFunction);
-
-  console.log('query works', await future().query({
-    query: gql`
-      query($image: Image!) {
-        head(image: $image) {
-          bbox
-        }
-      }
-    `,
-    variables: {
-      image,
-    },
-  }));
+  // const returnedFunction = await headFn({ image });
+  // console.log('returned function works', returnedFunction);
+  //
+  // const getFunction = await future().get('head', { image });
+  // console.log('get function works', getFunction);
+  //
+  // console.log('query works', await future().query({
+  //   query: gql`
+  //     query($image: Image!) {
+  //       head(image: $image) {
+  //         bbox
+  //       }
+  //     }
+  //   `,
+  //   variables: {
+  //     image,
+  //   },
+  // }));
 };
 
 run();
