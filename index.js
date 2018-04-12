@@ -5,11 +5,9 @@ const and = require('./lib/and');
 
 global.definitions = [];
 
-module.exports = (opts) => {
-  return {
-    create,
-    get,
-    and,
-    query: queryServer,
-  };
+module.exports = {
+  create,
+  get,
+  and,
+  query: queryServer,
 };

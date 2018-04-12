@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node --harmony index.js",
     "test": "node --harmony test.js",
-    "testImage": "node --harmony testImage.js"
+    "testImage": "node --harmony testImage.js",
+    "testApp": "node --harmony test-laravel-app/index.js"
   },
   "dependencies": {
     "apollo-cache-inmemory": "^1.1.11",
@@ -14,6 +15,7 @@
     "apollo-link-http": "^1.5.3",
     "bluebird": "^3.5.1",
     "brain.js": "^1.1.2",
+    "callsite": "^1.0.0",
     "graphql": "^0.13.2",
     "graphql-tag": "^2.8.0",
     "graphql-yoga": "^1.6.1",
