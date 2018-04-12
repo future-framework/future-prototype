@@ -8,19 +8,19 @@ const descriptions = [
   'i do this',
 ];
 
-const frameworkLabels = [
+const labels = [
   'laravel',
   'laravel',
   'no',
 ];
 
-const trainFramework = ({ descriptions, frameworkLabels }) => {
+const train = ({ descriptions, labels }) => {
   const net = new brain.recurrent.LSTM();
 
   const data = _.map(descriptions, (description, i) => (
     {
       input: description,
-      output: frameworkLabels[i],
+      output: labels[i],
     }
   ));
 
@@ -49,14 +49,14 @@ const framework = ({ description, train: { weights } }) => {
 module.exports = future.create(framework, {
   name: 'framework',
   train: {
-    fn: trainFramework,
+    fn: train,
     variables: {
       descriptions,
-      frameworkLabels,
+      labels,
     },
     input: {
       descriptions: '[String]',
-      frameworkLabels: '[String]',
+      labels: '[String]',
     },
   },
   input: {
