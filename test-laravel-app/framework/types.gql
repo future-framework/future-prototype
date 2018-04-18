@@ -1,0 +1,15 @@
+
+type Transcription {
+  time: Time
+  text: String
+}
+
+type SoundWithTranscriptions {
+  file: Sound
+  transcriptions: [Transcription]
+}
+
+type DescriptionWithLabel {
+  description:String
+  label:String
+}
