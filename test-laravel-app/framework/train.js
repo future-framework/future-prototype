@@ -19,9 +19,9 @@ const labels = [
 //   label: labels[i],
 // }));
 
-const train = ({ descriptions, labels, output: { weights } }) => {
+const train = ({ descriptions, labels, output }) => {
   const net = new brain.recurrent.LSTM();
-  if (weights) net.fromJSON(weights);
+  if (output.weights) net.fromJSON(output.weights);
 
   const data = _.map(descriptions, (description, i) => (
     {
@@ -37,12 +37,12 @@ const train = ({ descriptions, labels, output: { weights } }) => {
   });
 
   return {
-    weights: net.toJSON(),
+    weights: JSON.stringify(net.toJSON()),
   };
 };
 
 module.exports = future.create(train, {
-  run: !process.env.PRODUCTION, // DEVELOPMENT: true PRODUCTION: cache
+  cache: !process.env.PRODUCTION, // DEVELOPMENT: true PRODUCTION: cache
   name: 'train',
   input: {
     // sounds: '[SoundWithTranscriptions]',
