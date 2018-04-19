@@ -3,7 +3,6 @@ const _ = require('lodash');
 const future = require('./index');
 const brain = require('brain.js');
 const sharp = require('sharp');
-const Promise = require('bluebird');
 
 const NUM = 40000
 

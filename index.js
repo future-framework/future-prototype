@@ -1,4 +1,4 @@
-const queryServer = require('./lib/queryServer');
+const serverQuery = require('./lib/server/query');
 const get = require('./lib/get');
 const create = require('./lib/create');
 const and = require('./lib/and');
@@ -9,5 +9,5 @@ module.exports = {
   create,
   get,
   and,
-  query: queryServer,
+  query: serverQuery,
 };

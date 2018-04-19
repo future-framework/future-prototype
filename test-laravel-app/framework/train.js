@@ -42,7 +42,7 @@ const train = ({ descriptions, labels, output }) => {
 };
 
 module.exports = future.create(train, {
-  cache: !process.env.PRODUCTION, // DEVELOPMENT: true PRODUCTION: cache
+  cache: true, // true|false|'error'
   name: 'train',
   input: {
     // sounds: '[SoundWithTranscriptions]',
