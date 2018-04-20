@@ -19,10 +19,14 @@ const labels = [
 //   label: labels[i],
 // }));
 
-const train = ({ descriptions, labels, output }) => {
+const train = (args) => {
+  console.log('args', args);
+  const { descriptions, labels, output } = args;
   const net = new brain.recurrent.LSTM();
-  if (output.weights) net.fromJSON(output.weights);
+  // if (output.weights) net.fromJSON(output.weights);
 
+  console.log('d',descriptions)
+  console.log('l',labels)
   const data = _.map(descriptions, (description, i) => (
     {
       input: description,
