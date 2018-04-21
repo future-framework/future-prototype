@@ -30,7 +30,7 @@ const run = async () => {
 
   // console.log('TRAAAAAAAAAAA ---------------', await train);
   // await framework();
-  await train
+  // await train
   console.log('frame', await framework({ description: descriptions[0] }));
 
   // const trainSentiment = ({ descriptions, sentimentLabels, framework }) => {
