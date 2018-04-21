@@ -23,6 +23,7 @@ const train = (args) => {
   if (args.cache) {
     return args.cache;
   }
+
   const { descriptions, labels, output } = args;
   const net = new brain.recurrent.LSTM();
   // if (output.weights) net.fromJSON(output.weights);

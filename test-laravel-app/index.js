@@ -4,7 +4,7 @@ const future = require('../index');
 const brain = require('brain.js');
 const sharp = require('sharp');
 
-const train = require('./framework/train');
+// const train = require('./framework/train');
 const framework = require('./framework/index');
 
 const NUM = 40000
@@ -28,10 +28,11 @@ const run = async () => {
     'no',
   ];
 
+  await framework();
+
   // console.log('TRAAAAAAAAAAA ---------------', await train);
-  // await framework();
   // await train
-  console.log('frame', await framework({ description: descriptions[0] }));
+  // console.log('frame', await framework({ description: descriptions[0] }));
 
   // const trainSentiment = ({ descriptions, sentimentLabels, framework }) => {
   //   const net = new brain.recurrent.LSTM();

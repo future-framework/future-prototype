@@ -2,7 +2,7 @@ const future = require('../../index');
 const brain = require('brain.js');
 const _ = require('lodash');
 
-// const train = require('./train')
+const train = require('./train')
 
 const framework = ({ description, train: { weights } }) => {
   // console.log('ARGS', _.keys(args.train.weights))
