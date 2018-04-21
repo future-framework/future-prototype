@@ -28,11 +28,11 @@ const run = async () => {
     'no',
   ];
 
-  await framework();
+  // await framework();
 
   // console.log('TRAAAAAAAAAAA ---------------', await train);
   // await train
-  // console.log('frame', await framework({ description: descriptions[0] }));
+  console.log('frame', await framework({ description: descriptions[0] }));
 
   // const trainSentiment = ({ descriptions, sentimentLabels, framework }) => {
   //   const net = new brain.recurrent.LSTM();
