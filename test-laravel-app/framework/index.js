@@ -20,7 +20,7 @@ const framework = ({ description, train: { weights } }) => {
 module.exports = future.create(framework, {
   name: 'framework',
   input: {
-    train: 'TrainInput',
+    train,
     description: 'String',
   },
   output: {
