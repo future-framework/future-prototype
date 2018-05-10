@@ -6,7 +6,10 @@ const generateQuery = require('./query/generate')
 
 module.exports = async (name, variables) => {
   const definition = findDefinition({ name })
-  if (!definition) throw `Definition for ${name} missing.`;
+  if (!definition) {
+    console.log(definitions)
+    throw `Definition for ${name} missing.`;
+  }
 
   const query = gql(await generateQuery(definition, variables))
 

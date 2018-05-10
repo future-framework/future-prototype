@@ -34,8 +34,8 @@ module.exports = function(fn, opts) {
 
   const result = (variables) => {
     const get = require('./get');
-    const innerResult = get(fn.name, variables);
-    Object.defineProperty(innerResult, 'futureName', { value: fn.name })
+    const innerResult = get(definition.name, variables);
+    Object.defineProperty(innerResult, 'futureName', { value: definition.name })
     return innerResult;
   };
 

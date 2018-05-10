@@ -1,4 +1,4 @@
-const create = require('./lib/create');
+const create = require('./create');
 
 global.definitions = [];
 module.exports = create;

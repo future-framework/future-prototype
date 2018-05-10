@@ -1,15 +1,19 @@
 {
   "name": "future-framework",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
     "start": "node --harmony index.js",
     "test": "node --harmony test.js",
     "testImage": "node --harmony testImage.js",
+    "build": "./node_modules/.bin/babel src -d dist",
     "testApp": "node --harmony test-laravel-app/index.js"
   },
   "dependencies": {
+    "@babel/cli": "^7.0.0-beta.46",
+    "@babel/core": "^7.0.0-beta.46",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.46",
     "apollo-cache-inmemory": "^1.1.11",
     "apollo-client": "^2.2.7",
     "apollo-link-http": "^1.5.3",
