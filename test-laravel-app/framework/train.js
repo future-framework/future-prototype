@@ -14,17 +14,11 @@ const labels = [
   'no',
 ];
 
-// const descriptionsWithLabels = _.map(descriptions, (description, i) => ({
-//   description,
-//   label: labels[i],
-// }));
-
 const train = ({ descriptions, labels, cache }) => {
   if (cache) return cache;
 
   const net = new brain.recurrent.LSTM();
-  console.log(_.keys(cache))
-  if (cache.weights) net.fromJSON(JSON.parse(cache.weights));
+  if (_.get(cache, 'weights')) net.fromJSON(JSON.parse(cache.weights));
 
   const data = _.map(descriptions, (description, i) => (
     {
@@ -32,8 +26,6 @@ const train = ({ descriptions, labels, cache }) => {
       output: labels[i],
     }
   ));
-
-  console.log('data', JSON.stringify(data));
 
   if (data.length) {
     net.train(data, {
@@ -50,8 +42,6 @@ module.exports = future(train, {
   cache: true, // true|false|'error'
   name: 'train',
   input: {
-    // sounds: '[SoundWithTranscriptions]',
-    // descriptionsWithLabels: '[DescriptionWithLabel]',
     descriptions: '[String]',
     labels: '[String]',
   },
