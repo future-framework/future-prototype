@@ -2,7 +2,6 @@ const gql = require('graphql-tag')
 const _ = require('lodash');
 const future = require('../index');
 const brain = require('brain.js');
-const sharp = require('sharp');
 
 const framework = require('./framework/index');
 const happyFramework = require('./framework/happyFramework');

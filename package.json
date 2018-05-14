@@ -1,6 +1,6 @@
 {
   "name": "future-framework",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
@@ -29,8 +29,6 @@
     "lodash": "^4.17.5",
     "node-fetch": "^2.1.1",
     "number-to-words": "^1.2.3",
-    "one-hot-json": "^0.0.3",
-    "p-iteration": "^1.1.5",
-    "sharp": "^0.20.1"
+    "p-iteration": "^1.1.5"
   }
 }
